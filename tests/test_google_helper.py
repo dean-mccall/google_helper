@@ -3,11 +3,16 @@ import pytest
 import tempfile
 from pathlib import Path
 import glob
+import logging
 
 
 TEST_ALBUM_NAME = 'One-Test'
 CREDENTIALS_FOLDER_NAME = 'credentials'
 
+
+logging.basicConfig(
+    level = logging.TRACE,
+    format = '%(asctime)s | %(name)s | %(levelname)s | %(message)s')
 
 def test_album_by_title():
     """test methods to find albums"""
