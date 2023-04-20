@@ -6,13 +6,11 @@ import glob
 import logging
 
 
+logger = logging.getLogger(__name__)
 TEST_ALBUM_NAME = 'One-Test'
 CREDENTIALS_FOLDER_NAME = 'credentials'
 
 
-logging.basicConfig(
-    level = logging.DEBUG,
-    format = '%(asctime)s | %(name)s | %(levelname)s | %(message)s')
 
 def test_album_by_title():
     """test methods to find albums"""

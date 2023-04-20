@@ -12,6 +12,9 @@ import requests
 from google_auth_oauthlib.flow import InstalledAppFlow
 
 
+logger = logging.getLogger(__name__)
+
+
 class Token(object):
     """keep oauth token information"""
     def __init__(self, secret_file, scopes):
@@ -25,7 +28,7 @@ class Token(object):
 
         #  check for existing stored token
         if pickle_file.exists():
-            logging.debug('found existing token')
+            logger.debug('found existing token')
             with open(pickle_file, 'rb') as token :
                 self.credentials = pickle.load(token)
 
@@ -33,11 +36,11 @@ class Token(object):
         if not self.credentials or not self.credentials.valid:
             #  token needs to be refreshed
             if self.credentials and self.credentials.expired and self.credentials.refresh_token :
-                logging.debug('refreshing token')
+                logger.debug('refreshing token')
                 self.credentials.refresh(google.auth.transport.requests.Request())
             #  follow flow to get a new token
             else:
-                logging.debug('getting new token')
+                logger.debug('getting new token')
                 flow = InstalledAppFlow.from_client_secrets_file(secret_file, scopes)
                 self.credentials = flow.run_local_server()
                 with open(pickle_file, 'wb') as token :
@@ -65,10 +68,10 @@ class GoogleService(object):
         self.scopes = scopes
         self.api_version = api_version
         self.api_name = api_name
-        logging.debug('cached_secret_file = %s', self.cached_secret_file)
-        logging.debug('scopes = %s', scopes)
-        logging.debug('api_version = %s', api_version)
-        logging.debug('api_name = %s', api_name)
+        logger.debug('cached_secret_file = %s', self.cached_secret_file)
+        logger.debug('scopes = %s', scopes)
+        logger.debug('api_version = %s', api_version)
+        logger.debug('api_name = %s', api_name)
 
         #  authentication token
         self.token = Token(cached_secret_file, scopes)
@@ -115,7 +118,7 @@ class GooglePhotoService(GoogleService):
             #  set starting point for the next page
             page_token = response['nextPageToken']
 
-        logging.debug('return %s albums', len(result))
+        logger.debug('return %s albums', len(result))
         return result
 
 
@@ -136,7 +139,7 @@ class GooglePhotoService(GoogleService):
         if len(found_album_df.index) > 1:
             raise TooManyException()
 
-        logging.debug('found an album to return')
+        logger.debug('found an album to return')
         return found_album_df.to_dict('records')[0]
 
 
@@ -169,7 +172,7 @@ class GooglePhotoService(GoogleService):
             #  not finished, prepare for the next page
             page_token = response['nextPageToken']
 
-        logging.debug('found %s media items', len(result))
+        logger.debug('found %s media items', len(result))
         return result
 
 
@@ -196,4 +199,4 @@ class GooglePhotoService(GoogleService):
         with open(output_directory / 'media_items.json', 'w') as inventory_file:
             inventory_file.write(json.dumps(media_items))
 
-        logging.debug('wrote %s files plus inventory', len(media_items))
+        logger.debug('wrote %s files plus inventory', len(media_items))
