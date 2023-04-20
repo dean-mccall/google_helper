@@ -11,7 +11,7 @@ CREDENTIALS_FOLDER_NAME = 'credentials'
 
 
 logging.basicConfig(
-    level = logging.TRACE,
+    level = logging.DEBUG,
     format = '%(asctime)s | %(name)s | %(levelname)s | %(message)s')
 
 def test_album_by_title():
